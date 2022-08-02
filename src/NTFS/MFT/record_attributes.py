@@ -46,12 +46,22 @@ class FileName:
 
 
         self.name = ""
+        tempName = ""
 
         self.lenName = data[startByte + (header.offSetToAttribute + 0x40)]
         try:
-            self.name = data[startByte + (header.offSetToAttribute + 0x42) : startByte + (header.offSetToAttribute + 0x42) + (self.lenName * 2)].decode(encoding="utf-16", errors="strict")
+            tempName = data[startByte + (header.offSetToAttribute + 0x42) : startByte + (header.offSetToAttribute + 0x42) + (self.lenName * 2)].decode(encoding="utf-16", errors="strict")
         except UnicodeDecodeError:
+            tempName = False
+
+        if type(tempName) is not bool:
+            for char in tempName:
+                if ord(char) >= 20 and ord(char) <= 128:
+                    self.name = self.name + char
+        else:
             self.name = False
+
+        
 
 class AttributeHeader:
 
